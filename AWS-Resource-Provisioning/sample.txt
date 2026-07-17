@@ -1,0 +1,6 @@
+Hello AWS!
+
+This file was uploaded using Python boto3.
+
+Project: Automate AWS Resource Provisioning
+Created by: Pranav Patil

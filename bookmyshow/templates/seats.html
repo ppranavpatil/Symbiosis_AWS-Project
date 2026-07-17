@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Seats - {{ showtime.title }} | Pune Multiplex</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #0a0a14; color: white; }
+
+        header { background: linear-gradient(90deg, #0d0d1a, #1a0a2e); padding: 18px 40px; border-bottom: 3px solid #ff4757; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 12px; }
+        .logo-icon { font-size: 32px; }
+        .logo-text h1 { font-size: 22px; color: #ff4757; letter-spacing: 2px; font-weight: 800; }
+        .logo-text p { font-size: 11px; color: #888; letter-spacing: 1px; }
+        .back-btn { color: #ccc; text-decoration: none; font-size: 13px; border: 1px solid #444; padding: 7px 16px; border-radius: 20px; transition: all 0.2s; }
+        .back-btn:hover { background: #ff4757; border-color: #ff4757; color: white; }
+
+        .show-info { background: linear-gradient(135deg, #1a0a2e, #0d1a3a); padding: 20px 40px; border-bottom: 1px solid #222; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+        .show-info h2 { font-size: 22px; font-weight: 800; color: white; }
+        .show-tag { background: rgba(255,255,255,0.08); padding: 5px 14px; border-radius: 20px; font-size: 12px; color: #ccc; }
+
+        .flash { background: linear-gradient(90deg, #ff4757, #ff6b81); padding: 12px 40px; text-align: center; font-weight: 600; }
+
+        .seat-section { padding: 30px 40px; }
+
+        .screen-container { margin-bottom: 30px; text-align: center; }
+        .screen-bar { background: linear-gradient(90deg, transparent, #ccc, transparent); height: 6px; width: 70%; margin: 0 auto 8px; border-radius: 3px; }
+        .screen-label { color: #555; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; }
+
+        .seat-map { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 25px; }
+        .seat-row { display: flex; align-items: center; gap: 8px; }
+        .row-label { width: 24px; text-align: center; font-size: 13px; color: #555; font-weight: 700; }
+        .seat { width: 36px; height: 36px; border-radius: 6px 6px 10px 10px; border: none; color: white; cursor: pointer; font-size: 10px; font-weight: 600; transition: all 0.2s; position: relative; }
+        .seat.available { background: #1a2a4a; }
+        .seat.available:hover { background: #2a3a6a; transform: scale(1.1); }
+        .seat.booked { background: #2a2a2a; color: #555; cursor: not-allowed; }
+        .seat.selected { background: linear-gradient(135deg, #ff4757, #ff6b81); transform: scale(1.1); box-shadow: 0 4px 12px rgba(255,71,87,0.4); }
+
+        .legend { display: flex; justify-content: center; gap: 25px; margin-bottom: 25px; flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #aaa; }
+        .legend-box { width: 20px; height: 20px; border-radius: 4px; }
+
+        .booking-panel { max-width: 500px; margin: 0 auto; background: #12121f; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 30px; }
+        .booking-panel h3 { font-size: 18px; margin-bottom: 20px; color: white; }
+        .selected-info { background: rgba(255,71,87,0.1); border: 1px solid rgba(255,71,87,0.3); border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 14px; color: #ff6b81; min-height: 44px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; color: #888; margin-bottom: 6px; }
+        .form-group input { width: 100%; padding: 12px 16px; background: #1a1a2e; border: 1px solid #333; border-radius: 8px; color: white; font-size: 14px; outline: none; transition: border 0.2s; }
+        .form-group input:focus { border-color: #ff4757; }
+        .submit-btn { width: 100%; background: linear-gradient(90deg, #ff4757, #ff6b81); color: white; padding: 14px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 700; transition: opacity 0.2s; margin-top: 5px; }
+        .submit-btn:hover { opacity: 0.85; }
+        .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        footer { background: #0d0d1a; border-top: 1px solid #1a1a2e; padding: 30px 40px; text-align: center; color: #555; font-size: 13px; margin-top: 40px; }
+        footer span { color: #ff4757; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <div class="logo-icon">🎬</div>
+            <div class="logo-text">
+                <h1>PUNE MULTIPLEX</h1>
+                <p>🍿 BOOK YOUR EXPERIENCE</p>
+            </div>
+        </div>
+        <a class="back-btn" href="javascript:history.back()">← Back</a>
+    </header>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="flash">⚠️ {{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="show-info">
+        <h2>{{ showtime.title }}</h2>
+        <span class="show-tag">📅 {{ showtime.show_date }}</span>
+        <span class="show-tag">🕑 {{ showtime.show_time }}</span>
+        <span class="show-tag">🎭 {{ showtime.screen }}</span>
+    </div>
+
+    <div class="seat-section">
+        <div class="screen-container">
+            <div class="screen-bar"></div>
+            <div class="screen-label">Screen this way</div>
+        </div>
+
+        <form id="booking-form" method="POST" action="{{ url_for('book_seats') }}">
+            <input type="hidden" name="showtime_id" value="{{ showtime.id }}">
+
+            <div class="seat-map">
+                {% set rows = ['A','B','C','D','E'] %}
+                {% for row_letter in rows %}
+                <div class="seat-row">
+                    <div class="row-label">{{ row_letter }}</div>
+                    {% for seat in seats %}
+                        {% if seat.seat_number[0] == row_letter %}
+                            {% if seat.is_booked %}
+                                <button type="button" class="seat booked" disabled title="Already booked">{{ seat.seat_number }}</button>
+                            {% else %}
+                                <button type="button" class="seat available" data-seat-id="{{ seat.id }}" onclick="toggleSeat(this)" title="Click to select">{{ seat.seat_number }}</button>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="legend">
+                <div class="legend-item"><div class="legend-box" style="background:#1a2a4a;"></div> Available</div>
+                <div class="legend-item"><div class="legend-box" style="background:linear-gradient(135deg,#ff4757,#ff6b81);"></div> Selected</div>
+                <div class="legend-item"><div class="legend-box" style="background:#2a2a2a;"></div> Booked</div>
+            </div>
+
+            <div class="booking-panel">
+                <h3>🎟️ Complete Your Booking</h3>
+                <div class="selected-info" id="selected-info">No seats selected yet. Click seats above to select.</div>
+                <div class="form-group">
+                    <label>Your Name</label>
+                    <input type="text" name="customer_name" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label>Your Email</label>
+                    <input type="email" name="customer_email" placeholder="Enter your email" required>
+                </div>
+                <button type="submit" class="submit-btn" id="submit-btn" disabled>Select seats to continue</button>
+            </div>
+        </form>
+    </div>
+
+    <footer>
+        <p>© 2026 <span>Pune Multiplex</span> · Pune, Maharashtra · All Rights Reserved</p>
+    </footer>
+
+    <script>
+        let selectedSeats = [];
+
+        function toggleSeat(btn) {
+            const seatId = btn.getAttribute('data-seat-id');
+            const seatName = btn.textContent.trim();
+
+            if (btn.classList.contains('selected')) {
+                btn.classList.remove('selected');
+                btn.classList.add('available');
+                selectedSeats = selectedSeats.filter(s => s.id !== seatId);
+            } else {
+                btn.classList.remove('available');
+                btn.classList.add('selected');
+                selectedSeats.push({ id: seatId, name: seatName });
+            }
+
+            updatePanel();
+        }
+
+        function updatePanel() {
+            const info = document.getElementById('selected-info');
+            const submitBtn = document.getElementById('submit-btn');
+
+            document.querySelectorAll('input[name="seat_ids"]').forEach(el => el.remove());
+
+            if (selectedSeats.length === 0) {
+                info.textContent = 'No seats selected yet. Click seats above to select.';
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Select seats to continue';
+            } else {
+                const names = selectedSeats.map(s => s.name).join(', ');
+                info.textContent = `${selectedSeats.length} seat(s) selected: ${names}`;
+                submitBtn.disabled = false;
+                submitBtn.textContent = `✅ Confirm ${selectedSeats.length} Seat(s)`;
+
+                selectedSeats.forEach(seat => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'seat_ids';
+                    input.value = seat.id;
+                    document.getElementById('booking-form').appendChild(input);
+                });
+            }
+        }
+    </script>
+</body>
+</html>

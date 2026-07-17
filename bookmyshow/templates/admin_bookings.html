@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel | Pune Multiplex</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #0a0a14; color: white; }
+
+        header { background: linear-gradient(90deg, #0d0d1a, #1a0a2e); padding: 18px 40px; border-bottom: 3px solid #ff4757; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 12px; }
+        .logo-icon { font-size: 32px; }
+        .logo-text h1 { font-size: 22px; color: #ff4757; letter-spacing: 2px; font-weight: 800; }
+        .logo-text p { font-size: 11px; color: #888; letter-spacing: 1px; }
+        .back-btn { color: #ccc; text-decoration: none; font-size: 13px; border: 1px solid #444; padding: 7px 16px; border-radius: 20px; transition: all 0.2s; }
+        .back-btn:hover { background: #ff4757; border-color: #ff4757; color: white; }
+
+        .page-header { background: linear-gradient(135deg, #1a0a2e, #0d1a3a); padding: 30px 40px; border-bottom: 1px solid #222; }
+        .page-header h2 { font-size: 26px; font-weight: 800; margin-bottom: 8px; }
+        .page-header p { color: #888; font-size: 14px; }
+
+        .stats { display: flex; gap: 20px; padding: 30px 40px; flex-wrap: wrap; }
+        .stat-card { background: #12121f; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 20px 25px; flex: 1; min-width: 150px; text-align: center; }
+        .stat-card .number { font-size: 32px; font-weight: 800; color: #ff4757; }
+        .stat-card .label { font-size: 12px; color: #666; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
+
+        .section { padding: 0 40px 40px; }
+        .section-title { font-size: 18px; font-weight: 700; color: white; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .section-title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, #333, transparent); }
+
+        .table-wrapper { overflow-x: auto; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #12121f; }
+        th { padding: 14px 16px; text-align: left; font-size: 11px; color: #ff4757; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; border-bottom: 1px solid #222; }
+        td { padding: 14px 16px; font-size: 13px; color: #ccc; border-bottom: 1px solid #1a1a2e; }
+        tbody tr { background: #0d0d1a; transition: background 0.2s; }
+        tbody tr:hover { background: #12121f; }
+        tbody tr:last-child td { border-bottom: none; }
+
+        .no-bookings { text-align: center; padding: 60px 20px; color: #555; }
+        .no-bookings .icon { font-size: 50px; margin-bottom: 15px; }
+        .no-bookings p { font-size: 16px; }
+
+        .badge-confirmed { background: rgba(46,213,115,0.15); color: #2ed573; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+
+        footer { background: #0d0d1a; border-top: 1px solid #1a1a2e; padding: 30px 40px; text-align: center; color: #555; font-size: 13px; margin-top: 20px; }
+        footer span { color: #ff4757; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <div class="logo-icon">🎬</div>
+            <div class="logo-text">
+                <h1>PUNE MULTIPLEX</h1>
+                <p>⚙️ ADMIN PANEL</p>
+            </div>
+        </div>
+        <a class="back-btn" href="{{ url_for('home') }}">← Back to Movies</a>
+    </header>
+
+    <div class="page-header">
+        <h2>⚙️ Bookings Dashboard</h2>
+        <p>View and manage all customer bookings</p>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <div class="number">{{ bookings|length }}</div>
+            <div class="label">Total Bookings</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">4</div>
+            <div class="label">Movies Running</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">16</div>
+            <div class="label">Total Showtimes</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">640</div>
+            <div class="label">Total Seats</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">📋 All Bookings</div>
+
+        {% if bookings %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Movie</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Seat</th>
+                        <th>Customer</th>
+                        <th>Email</th>
+                        <th>Booked At</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for b in bookings %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ b.title }}</td>
+                        <td>📅 {{ b.show_date }}</td>
+                        <td>🕑 {{ b.show_time }}</td>
+                        <td><strong>{{ b.seat_number }}</strong></td>
+                        <td>👤 {{ b.customer_name }}</td>
+                        <td>{{ b.customer_email }}</td>
+                        <td>{{ b.booking_time }}</td>
+                        <td><span class="badge-confirmed">✅ Confirmed</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="no-bookings">
+            <div class="icon">🎭</div>
+            <p>No bookings yet. Bookings will appear here once customers start booking.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <footer>
+        <p>© 2026 <span>Pune Multiplex</span> · Admin Panel · All Rights Reserved</p>
+    </footer>
+</body>
+</html>
